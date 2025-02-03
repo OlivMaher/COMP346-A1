@@ -9,7 +9,7 @@
  *
  * @author Kerly Titus
  */
-public class Network {
+public class Network extends Thread{
     
     private static int maxNbPackets;                           /* Maximum number of simultaneous transactions handled by the network buffer */
     private static int inputIndexClient, inputIndexServer, outputIndexServer, outputIndexClient;                   /* Network buffer indices for accessing the input buffer (inputIndexClient, outputIndexServer) and output buffer (inputIndexServer, outputIndexClient) */
@@ -550,6 +550,7 @@ public class Network {
      * @return 
      * @param
      */
+    @Override
     public void run()
     {	
     	System.out.println("\n DEBUG : Network.run() - starting network thread");
@@ -557,6 +558,25 @@ public class Network {
     	while (true)
     	{
 		/* Implement here the code for the run method ... */
+            if (getClientConnectionStatus().equals("connected") && getServerConnectionStatus().equals("connected")){
+                if (!getInBufferStatus().equals("empty")){
+                    Transactions transactions = new Transactions();
+                    transferIn(transactions);
+                    System.out.println("\n DEBUG : Network.run() - processing transaction from incoming buffer");
+                }
+                else{
+                    System.out.println("\n Input Buffer is full");
+                }
+
+                if (!getOutBufferStatus().equals("empty")){
+                    Transactions transactions = new Transactions();
+                    transferOut(transactions);
+                    System.out.println("\n DEBUG : Network.run() - processing transaction from outgoing buffer");
+                }
+                else{
+                    System.out.println("\n Output Buffer is full");
+                }
+            }
     	}    
     }
 }
