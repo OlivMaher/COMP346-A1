@@ -313,7 +313,18 @@ public class Server {
     	System.out.println("\n DEBUG : Server.run() - starting server thread " + objNetwork.getServerConnectionStatus());
     	
     	/* Implement the code for the run method */
-        
+        serverStartTime = System.currentTimeMillis();
+        while (!objNetwork.getClientConnectionStatus().equals("disconnected")){
+            if (!objNetwork.getInBufferStatus().equals("empty")){
+                objNetwork.transferIn(trans);
+                processTransactions(trans);
+            }
+            else{
+                Thread.yield();
+            }
+        }
+
+        serverEndTime = System.currentTimeMillis();
         System.out.println("\n Terminating server thread - " + " Running time " + (serverEndTime - serverStartTime) + " milliseconds");
            
     }
